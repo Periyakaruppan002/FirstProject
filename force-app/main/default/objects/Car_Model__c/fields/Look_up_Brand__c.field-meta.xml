@@ -6,7 +6,7 @@
     <referenceTo>Brand__c</referenceTo>
     <relationshipLabel>Car Models (Look up Brand)</relationshipLabel>
     <relationshipName>Car_Models1</relationshipName>
-    <required>false</required>
+    <required>true</required>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>
 </CustomField>

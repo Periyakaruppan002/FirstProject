@@ -1,0 +1,38 @@
+name: 🚀 Deploy to Salesforce with SF CLI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install the modern Salesforce CLI (sf)
+      - name: 🛠️ Install Salesforce CLI (sf)
+        run: |
+          npm install --global @salesforce/cli
+          sf --version
+
+      # Step 3: Authenticate using SFDX Auth URL (stored as secret)
+      - name: 🔐 Authenticate to Salesforce (via SFDX Auth URL)
+        run: |
+          echo "${{ secrets.SALESFORCE_AUTH_URL }}" > authurl.txt
+          cat authurl.txt  # Confirm file written (debug only)
+          sf org login sfdx-url --sfdx-url-file authurl.txt --alias targetOrg --set-default
+
+      # Step 4: Confirm successful authentication
+      - name: 🔍 Confirm Authenticated Org
+        run: sf org list
+
+      # Step 5: Deploy to Salesforce (source deploy from force-app folder)
+      - name: 🚀 Deploy to Salesforce
+        run: |
+          echo "📦 Deploying source from force-app..."
+          sf project deploy start --source-dir force-app --target-org targetOrg --test-level RunLocalTests --ignore-conflicts
